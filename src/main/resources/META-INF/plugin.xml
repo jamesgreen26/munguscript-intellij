@@ -1,0 +1,40 @@
+<!-- Loaded only at startup. Loaded into a running IDE, the plugin's element types can land in a
+     registry that earlier plugin reloads have filled past its limit, which breaks every .mungus file
+     until a restart anyway. -->
+<idea-plugin require-restart="true">
+    <id>g_mungus.munguscript</id>
+    <name>MungusScript</name>
+    <vendor>g_mungus</vendor>
+
+    <description><![CDATA[
+    Support for MungusScript scripts (<code>.mungus</code>): highlighting, errors and completion. Each
+    script is read by the MungusScript engine itself, in the language its host wrote to a language
+    file (<code>.mungustree</code>), so the editor sees the script as the host will run it.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="MungusScript" language="MungusScript" extensions="mungus"
+                  implementationClass="g_mungus.munguscript.intellij.MungusFileType" fieldName="INSTANCE"/>
+        <lang.parserDefinition language="MungusScript"
+                               implementationClass="g_mungus.munguscript.intellij.MungusParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="MungusScript"
+                                       implementationClass="g_mungus.munguscript.intellij.MungusSyntaxHighlighterFactory"/>
+        <externalAnnotator language="MungusScript"
+                           implementationClass="g_mungus.munguscript.intellij.MungusAnnotator"/>
+        <completion.contributor language="MungusScript"
+                                implementationClass="g_mungus.munguscript.intellij.MungusCompletionContributor"/>
+        <lang.commenter language="MungusScript"
+                        implementationClass="g_mungus.munguscript.intellij.MungusCommenter"/>
+        <colorSettingsPage implementation="g_mungus.munguscript.intellij.MungusColorSettingsPage"/>
+        <additionalTextAttributes scheme="Darcula" file="colorSchemes/MungusDarcula.xml"/>
+        <projectConfigurable parentId="language" instance="g_mungus.munguscript.intellij.MungusConfigurable"
+                             id="g_mungus.munguscript.settings" displayName="MungusScript" nonDefaultProject="true"/>
+    </extensions>
+
+    <projectListeners>
+        <listener class="g_mungus.munguscript.intellij.LanguageFileListener"
+                  topic="com.intellij.openapi.vfs.newvfs.BulkFileListener"/>
+    </projectListeners>
+</idea-plugin>

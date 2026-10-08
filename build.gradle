@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij.platform' version '2.19.0'
+}
+
+group = 'g_mungus'
+version = '0.1.0'
+
+java {
+    // IntelliJ IDEA 2025.3 runs on Java 21.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    // munguscript, from publishToMavenLocal.
+    mavenLocal()
+    mavenCentral()
+    // Brigadier, which munguscript depends on, is published by Mojang, not to Maven Central.
+    maven { url = 'https://libraries.minecraft.net' }
+    intellijPlatform {
+        defaultRepositories()
+        localPlatformArtifacts()
+    }
+}
+
+dependencies {
+    intellijPlatform {
+        local(providers.gradleProperty('intellijLocalPath'))
+    }
+    // Only the engine: languages come from the language files their hosts write. The IDE has its
+    // own copy of the annotations.
+    implementation('g_mungus:munguscript:0.1.0') {
+        exclude group: 'org.jetbrains', module: 'annotations'
+    }
+    compileOnly 'org.jetbrains:annotations:24.1.0'
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // The IntelliJ Platform's test setup loads JUnit 4 classes, even for JUnit 5 tests.
+    testRuntimeOnly 'junit:junit:4.13.2'
+}
+
+intellijPlatform {
+    pluginConfiguration {
+        ideaVersion {
+            sinceBuild = '253'
+        }
+    }
+    buildSearchableOptions = false
+    pluginVerification {
+        ides {
+            local(file(providers.gradleProperty('intellijLocalPath').get()))
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

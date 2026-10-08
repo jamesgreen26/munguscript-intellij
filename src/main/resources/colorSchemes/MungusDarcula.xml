@@ -1,0 +1,59 @@
+<?xml version='1.0'?>
+<!-- The ZeroPointSystems script terminal's colours (ScriptSyntaxHighlighter): Minecraft's gray for
+     plain text, keywords and comments, and its red for what cannot be read. -->
+<list>
+  <option name="MUNGUS_TEXT">
+    <value>
+      <option name="FOREGROUND" value="AAAAAA"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_COMMENT">
+    <value>
+      <option name="FOREGROUND" value="AAAAAA"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_KEYWORD">
+    <value>
+      <option name="FOREGROUND" value="AAAAAA"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_EXECUTOR">
+    <value>
+      <option name="FOREGROUND" value="F5A97F"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_GETTER">
+    <value>
+      <option name="FOREGROUND" value="C792EA"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_ALIAS">
+    <value>
+      <option name="FOREGROUND" value="C792EA"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_MAPPER">
+    <value>
+      <option name="FOREGROUND" value="4C99C9"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_ARGUMENT">
+    <value>
+      <option name="FOREGROUND" value="79F1A3"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+  <option name="MUNGUS_UNPARSED">
+    <value>
+      <option name="FOREGROUND" value="FF5555"/>
+      <option name="FONT_TYPE" value="0"/>
+    </value>
+  </option>
+</list>
