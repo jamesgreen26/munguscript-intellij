@@ -44,6 +44,24 @@ class LanguageLookupTest {
     }
 
     @Test
+    void languagesAreAlsoFoundInRunDotMungus() throws IOException {
+        Path language = file("run/.mungus/main.mungustree");
+        assertEquals(new LanguageLookup.Language(language), find(List.of(), "run/main.mungus"));
+        assertEquals(new LanguageLookup.Language(language), find(List.of(), "other.mungus"));
+    }
+
+    @Test
+    void aLanguageNamedAfterTheScriptIsLookedForInDotMungusFirst() throws IOException {
+        Path top = file(".mungus/main.mungustree");
+        file("run/.mungus/main.mungustree");
+        Path build = file("run/.mungus/build.mungustree");
+        assertEquals(new LanguageLookup.Language(top), find(List.of(), "run/main.mungus"));
+        assertEquals(new LanguageLookup.Language(build), find(List.of(), "build.mungus"));
+        LanguageLookup.NotFound other = assertInstanceOf(LanguageLookup.NotFound.class, find(List.of(), "other.mungus"));
+        assertTrue(other.reason().startsWith("Several language files are in .mungus/ or run/.mungus/"), other.reason());
+    }
+
+    @Test
     void withoutALanguageFileTheScriptSaysSo() {
         LanguageLookup.NotFound none = assertInstanceOf(LanguageLookup.NotFound.class, find(List.of(), "build.mungus"));
         assertTrue(none.reason().startsWith("No MungusScript language"), none.reason());

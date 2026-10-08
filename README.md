@@ -15,8 +15,9 @@ Which file a script is read by:
 1. **Settings | Languages & Frameworks | MungusScript**, if it lists any: globs over script paths in
    the project (such as `**.mungus` for all of them, or `tools/**.mungus`), each with a language
    file. The first glob that matches is used. They are kept in `.idea/munguscript.xml`.
-2. Otherwise `.mungus/*.mungustree` in the project: the file named after the script
-   (`deploy.mungus` reads by `deploy.mungustree`), or the only one there.
+2. Otherwise a `*.mungustree` in `.mungus/` or `run/.mungus/` of the project (where a game run in
+   development can write its language): the file named after the script (`deploy.mungus` reads by
+   `deploy.mungustree`), looked for in that order, or the only one in either.
 
 A script with no language says why, at the top of the editor. When a language file is written
 again, open scripts are read again.

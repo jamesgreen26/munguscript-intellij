@@ -47,8 +47,9 @@ public final class MungusConfigurable implements Configurable {
                 .createPanel(), BorderLayout.CENTER);
         JBLabel help = new JBLabel("<html>Scripts are globs over paths in the project, such as <code>**.mungus</code> for"
                 + " all of them; the first that matches is used. A language file is written by the language's host,"
-                + " e.g. <code>mvn munguscript:language</code>.<br>With none here, a <code>.mungus/*.mungustree</code>"
-                + " file is used: the one named after the script, or the only one.</html>");
+                + " e.g. <code>mvn munguscript:language</code>.<br>With none here, a <code>*.mungustree</code> file in"
+                + " <code>.mungus/</code> or <code>run/.mungus/</code> is used: the one named after the script,"
+                + " or the only one.</html>");
         help.setComponentStyle(UIUtil.ComponentStyle.SMALL);
         help.setForeground(UIUtil.getContextHelpForeground());
         panel.add(help, BorderLayout.SOUTH);
