@@ -70,7 +70,7 @@ class ScriptAnalysisTest {
         ScriptAnalysis.Result result = ANALYSIS.analyse(script);
         int start = script.indexOf("frobnicate");
         assertEquals(List.of(new ScriptAnalysis.Problem(start, start + "frobnicate".length(),
-                "Unknown command 'frobnicate'")), result.problems());
+                "Unknown command 'frobnicate'", false)), result.problems());
     }
 
     @Test

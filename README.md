@@ -4,6 +4,22 @@ IntelliJ support for `.mungus` scripts: highlighting, errors and completion. The
 language of its own. Each script is read by the MungusScript engine, in the language its host
 wrote to a language file (`.mungustree`), so the editor sees the script as the host will run it.
 
+## Writing scripts
+
+The editor follows the ZeroPointSystems script terminal:
+
+- Words are coloured as they are typed, by the engine, line by line. Once the script has been read
+  in full, it is coloured again, which catches lines whose meaning an edit changed, such as those
+  using an alias just defined.
+- Completion comes up after a space, `(`, `#` or `=`, as well as on letters, so what can come next
+  shows before a word is started. Each word is coloured as in a script and says what it takes or
+  gives.
+- A hint under the line shows what the argument being written wants, such as `<int>` or
+  `<from to destination>`, or, at the end of a line that cannot go on, why. Parameter Info (⌘P /
+  Ctrl+P) shows it anywhere.
+- The line being written is not underlined for what it still lacks; leaving it shows its errors.
+- On `#def` lines, `#def `, `= ` and `<alias>` are offered where they go.
+
 ## Language files
 
 A host writes its language with `ScriptRunner.writeLanguage`, or `ScriptLanguageFile` if it has
@@ -33,7 +49,8 @@ accept what the host would not.
 ## How it fits together
 
 - `MungusLexer` only tells lines apart: comments, `#def` definitions and commands. What each word
-  is depends on the language, which a grammar could not know.
+  is depends on the language, which a grammar could not know. For colouring,
+  `MungusHighlightingLexer` splits each line into words by what the engine says they are.
 - `ScriptAnalysis` reads a whole script as `ScriptRunner` does, without running anything, through
   the `ScriptView` read from a language file: `highlight` and `highlightDefinition` for colours,
   `check` for errors, and `suggest` and `suggestExpression` for completion.

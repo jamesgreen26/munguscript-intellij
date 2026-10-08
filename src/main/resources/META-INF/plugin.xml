@@ -28,6 +28,12 @@
                            implementationClass="g_mungus.munguscript.intellij.MungusAnnotator"/>
         <completion.contributor language="MungusScript"
                                 implementationClass="g_mungus.munguscript.intellij.MungusCompletionContributor"/>
+        <completion.confidence language="MungusScript" order="first"
+                               implementationClass="g_mungus.munguscript.intellij.MungusCompletionConfidence"/>
+        <typedHandler implementation="g_mungus.munguscript.intellij.MungusTypedHandler"/>
+        <codeInsight.parameterInfo language="MungusScript"
+                                   implementationClass="g_mungus.munguscript.intellij.MungusParameterInfoHandler"/>
+        <editorFactoryListener implementation="g_mungus.munguscript.intellij.CaretLineListener"/>
         <lang.commenter language="MungusScript"
                         implementationClass="g_mungus.munguscript.intellij.MungusCommenter"/>
         <colorSettingsPage implementation="g_mungus.munguscript.intellij.MungusColorSettingsPage"/>
