@@ -22,6 +22,10 @@ Which file a script is read by:
 A script with no language says why, at the top of the editor. When a language file is written
 again, open scripts are read again.
 
+Opening a `.mungustree` file shows the words it holds: what each executor takes, what each getter
+gives, the mappers that can follow each type, and the types themselves, with a search box and
+links between types. It is read only, and shown again when the file is written again.
+
 A language file holds the host's argument types only by their shape. One that does not describe
 its shape (a `PortableArgument`) is read loosely, as a word or a quoted string, so the editor may
 accept what the host would not.
@@ -35,7 +39,9 @@ accept what the host would not.
   `check` for errors, and `suggest` and `suggestExpression` for completion.
 - `LanguageLookup` finds a script's language file, and `LanguageCache` reads each once, and again
   when it changes.
-- Those three do not depend on the IDE, and are tested on their own. `MungusAnnotator`,
+- `VocabularyPage` lays out a language's words (`ScriptView.vocabulary`) as a page, which
+  `LanguageFileEditor` shows for `.mungustree` files.
+- Those four do not depend on the IDE, and are tested on their own. `MungusAnnotator`,
   `MungusCompletionContributor`, `MungusLanguages` and the settings are the IDE's side.
 - Colours can be changed in Settings | Editor | Color Scheme | MungusScript.
 

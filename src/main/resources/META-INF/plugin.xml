@@ -17,6 +17,9 @@
     <extensions defaultExtensionNs="com.intellij">
         <fileType name="MungusScript" language="MungusScript" extensions="mungus"
                   implementationClass="g_mungus.munguscript.intellij.MungusFileType" fieldName="INSTANCE"/>
+        <fileType name="MungusScript Language" extensions="mungustree"
+                  implementationClass="g_mungus.munguscript.intellij.LanguageFileType" fieldName="INSTANCE"/>
+        <fileEditorProvider implementation="g_mungus.munguscript.intellij.LanguageFileEditorProvider"/>
         <lang.parserDefinition language="MungusScript"
                                implementationClass="g_mungus.munguscript.intellij.MungusParserDefinition"/>
         <lang.syntaxHighlighterFactory language="MungusScript"
