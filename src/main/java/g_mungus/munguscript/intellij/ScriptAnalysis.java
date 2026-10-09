@@ -48,6 +48,9 @@ import java.util.stream.Collectors;
  * handles them: aliases are prepared from the whole script, the lines that used up are skipped,
  * and every other non-blank line is one command, stripped.
  *
+ * <p>Comments ({@code #} lines) and definitions may stand on any line, and each line sees only the
+ * aliases defined above it.
+ *
  * <p>What it offers while a line is written follows the ZeroPointSystems script terminal: words
  * from the first character, the usage of the argument being written, and {@code #def} and
  * {@code =} on definition lines.
@@ -145,7 +148,7 @@ public final class ScriptAnalysis {
             Line line = lines.get(i);
             spans.addAll(spans(line, i, prepared));
             if (!line.text().isBlank() && !prepared.consumedLines().contains(i)) {
-                check(line, prepared).ifPresent(problems::add);
+                check(line, prepared.at(i)).ifPresent(problems::add);
             }
         }
         return new Result(spans, problems);
@@ -165,6 +168,7 @@ public final class ScriptAnalysis {
         };
     }
 
+    /** What each word on a line is, seeing only the aliases defined above it. */
     private List<Span> spans(Line line, int index, CommandPreProcessor.Prepared prepared) {
         if (line.text().isBlank()) {
             return List.of();
@@ -172,13 +176,14 @@ public final class ScriptAnalysis {
         int base = line.start() + line.indent();
         String text = line.command();
         List<Span> spans = new ArrayList<>();
+        CommandPreProcessor.Prepared above = prepared.at(index);
         if (prepared.consumedLines().contains(index)) {
             if (isDefinition(text)) {
-                definition(base, text, prepared, spans);
+                definition(base, text, above, spans);
             }
             return spans;
         }
-        for (Highlight highlight : view.highlight(text, source, prepared)) {
+        for (Highlight highlight : view.highlight(text, source, above)) {
             spans.add(span(base, highlight));
         }
         return spans;
@@ -230,13 +235,14 @@ public final class ScriptAnalysis {
         // Spaces after the cursor are kept: a word may be about to start there.
         String text = line.text().substring(line.indent());
         String typed = text.substring(0, cursor - base);
+        CommandPreProcessor.Prepared above = prepared.at(index);
         if (prepared.consumedLines().contains(index)) {
-            return definitionCompletions(text, typed, base, cursor, prepared);
+            return definitionCompletions(text, typed, base, cursor, above);
         }
-        return completions(view.suggest(text, cursor - base, source, prepared).join().getList(), base, cursor);
+        return completions(view.suggest(text, cursor - base, source, above).join().getList(), base, cursor);
     }
 
-    /** On a line at the top: {@code #def} itself, then {@code =} after the name, then the expression. */
+    /** On a {@code #} line: {@code #def} itself, then {@code =} after the name, then the expression. */
     private List<Completion> definitionCompletions(String text, String typed, int base, int cursor,
                                                    CommandPreProcessor.Prepared prepared) {
         if (!typed.isEmpty() && DEFINE.startsWith(typed.strip()) && !typed.contains(" ")) {
@@ -297,7 +303,8 @@ public final class ScriptAnalysis {
         if (prepared.consumedLines().contains(index)) {
             return definitionUsage(text, lineCursor, base);
         }
-        PreProcessed processed = prepared.process(text, context);
+        CommandPreProcessor.Prepared above = prepared.at(index);
+        PreProcessed processed = above.process(text, context);
         ParseResults<SimpleSource> parse = view.parse(processed.command(), source);
         Optional<Usage> wanted = nodeUsage(parse, processed.sourceMap(), text, lineCursor, base);
         if (wanted.isPresent()) {
@@ -305,7 +312,7 @@ public final class ScriptAnalysis {
         }
         boolean atEnd = text.substring(lineCursor).isBlank();
         if (atEnd && complete(script, cursor).isEmpty()) {
-            return view.check(text.strip(), source, prepared)
+            return view.check(text.strip(), source, above)
                     .map(failure -> new Usage(base + (failure.faultRange() == null ? 0 : failure.faultRange().getStart()),
                             List.of(failure.reason()), true));
         }

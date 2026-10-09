@@ -86,6 +86,48 @@ class WritingTest {
     }
 
     @Test
+    void commentsAndDefinitionsMayStandBetweenCommands() {
+        String script = "log \"a\"\n#note\n#def x = 5\nlog value_of(x)\n";
+        assertEquals(List.of(), analysis.analyse(script).problems());
+        assertTrue(completion("log \"a\"\n#d", "#def ").isPresent());
+    }
+
+    @Test
+    void aLineSeesOnlyTheAliasesDefinedAboveIt() {
+        String script = "log value_of(stamp)\n#def stamp = \"v.txt\"\nlog value_of(stamp)\n";
+        List<ScriptAnalysis.Problem> problems = analysis.analyse(script).problems();
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).start() < script.indexOf("#def"), problems.toString());
+        String above = "log value_of(sta\n#def stamp = \"v.txt\"\n";
+        assertTrue(analysis.complete(above, above.indexOf("\n")).stream()
+                .noneMatch(completion -> completion.text().equals("stamp")));
+        String below = "#def stamp = \"v.txt\"\nlog value_of(sta";
+        assertTrue(completion(below, "stamp").isPresent());
+        // Coloured as an alias only where it is one.
+        Kind first = analysis.lineHighlighter(script).apply(0).stream()
+                .filter(span -> span.start() == script.indexOf("stamp")).findFirst().orElseThrow().kind();
+        Kind last = analysis.lineHighlighter(script).apply(script.lastIndexOf("log")).stream()
+                .filter(span -> span.start() == script.lastIndexOf("stamp")).findFirst().orElseThrow().kind();
+        assertTrue(first != Kind.ALIAS, String.valueOf(first));
+        assertEquals(Kind.ALIAS, last);
+    }
+
+    @Test
+    void anyHashLineIsAComment() {
+        assertEquals(List.of(), analysis.analyse("#note\n# fine\nlog \"a\"\n").problems());
+        MungusLexer lexer = new MungusLexer();
+        lexer.start("# a\n#note\n#def x = 5\n", 0, 21, 0);
+        List<IElementType> types = new ArrayList<>();
+        while (lexer.getTokenType() != null) {
+            if (lexer.getTokenType() != TokenType.WHITE_SPACE) {
+                types.add(lexer.getTokenType());
+            }
+            lexer.advance();
+        }
+        assertEquals(List.of(MungusTokenTypes.COMMENT, MungusTokenTypes.COMMENT, MungusTokenTypes.DEFINITION), types);
+    }
+
+    @Test
     void whatALineStillLacksIsToldFromWhatIsWrongInIt() {
         assertTrue(analysis.analyse("write_file\n").problems().get(0).atLineEnd());
         assertFalse(analysis.analyse("frobnicate \"x\"\n").problems().get(0).atLineEnd());
